@@ -44,13 +44,11 @@ danfse = Danfse(xml=xml_content, config=config)
 danfse.output('output_danfse.pdf')
 ```
 
-### Cancellation / Replacement (Events)
+### Cancellation / Replacement (Events and Substitute Invoices)
 
-In the national NFS-e model, an **authorized NFS-e XML is immutable**: it keeps
-its original status (`cStat` 100/107) forever. Cancellation and replacement are
-recorded in a **separate event document** (`<evento>`, e.g. `e101101 -
-Cancelamento de NFS-e`) that references the invoice by its access key
-(`chNFSe`).
+In the national NFS-e model, an **authorized NFS-e XML is immutable**: it keeps its original status code (`cStat`, e.g. 100 for Authorized, 107 for NFS-e MEI, or 102 for Judicial or Administrative Decision) forever. Cancellation and replacement are recorded in **separate event documents** (such as cancellation or replacement events).
+
+Additionally, the new invoice that replaces the previous one is identified by the `<subst>` group (tag `<chSubstda>`) in the DPS XML, and is rendered on the DANFSe with the status **"NFS-e Substituta"**.
 
 There are two ways to render a cancelled/replaced DANFSE:
 

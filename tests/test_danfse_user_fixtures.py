@@ -68,7 +68,7 @@ def test_danfse_sem_evento_permanece_autorizada(load_danfse_custom):
     """Sem o evento associado, a NFS-e nº 242 permanece Autorizada."""
     danfse = load_danfse_custom("nfse_cancelada_242.xml")
     assert danfse.data["is_cancelled"] is False
-    assert danfse.data["situacao_nfse"] == "Autorizada"
+    assert danfse.data["situacao_nfse"] == "NFS-e MEI"
 
 
 def test_danfse_evento_chave_divergente_ignorado(load_danfse_custom):

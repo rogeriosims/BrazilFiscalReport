@@ -25,9 +25,8 @@ FIN_NFSE = {"0": "Regular", "1": "Crédito", "2": "Débito"}
 # cStat — subconjunto comum; não mapeados -> "Normal"
 C_STAT = {
     "100": "Autorizada",
-    "107": "Autorizada",
-    "101": "Cancelada",
-    "102": "Cancelada por Substituição",
+    "107": "NFS-e MEI",
+    "102": "Decisão Judicial ou Administrativa",
 }
 
 # opSimpNac — NT 009: domínio 4

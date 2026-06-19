@@ -172,13 +172,13 @@ class DanfseParser:
         c_stat = self._t(inf_nfse, "cStat")
         fin = self._t(dps, "finNFSe")
 
-        # cStat: 101 = Cancelada, 102 = Cancelada por Substituição.
-        is_cancelled = c_stat == "101"
-        is_replaced = c_stat == "102"
+        # A situação real de cancelamento/substituição vem estritamente do evento associado,
+        # pois a NFS-e em si (e seu cStat) são imutáveis no XML original da nota.
+        is_cancelled = False
+        is_replaced = False
 
         # Evento separado (cancelamento/substituição) associado a esta NFS-e.
-        # A NFS-e é imutável (continua cStat 100/107); a situação real vem do
-        # evento, que referencia a nota pela chave. Só aplica se a chave bater.
+        # A situação real vem do evento, que referencia a nota pela chave. Só aplica se a chave bater.
         situacao_evento = ""
         if self.event:
             ev_ch = (self.event.get("ch_nfse") or "").strip()
@@ -190,7 +190,18 @@ class DanfseParser:
                     is_cancelled = True
                     situacao_evento = "Cancelada"
 
-        situacao = situacao_evento or K.C_STAT.get(c_stat, "Normal")
+        # Identificação de Substituição na nova nota (Nota Substituta):
+        # A nota substituta possui o grupo <subst> contendo a chave de acesso da nota substituída no campo <chSubstda>.
+        subst = self._find(dps, "subst")
+        ch_substda = self._t(subst, "chSubstda") if subst is not None else ""
+        is_substitute = bool(ch_substda)
+
+        if situacao_evento:
+            situacao = situacao_evento
+        elif is_substitute:
+            situacao = "NFS-e Substituta"
+        else:
+            situacao = K.C_STAT.get(c_stat, "Normal")
 
         return {
             "environment": tp_amb,
@@ -199,6 +210,8 @@ class DanfseParser:
             "c_stat": c_stat,
             "is_cancelled": is_cancelled,
             "is_replaced": is_replaced,
+            "is_substitute": is_substitute,
+            "ch_substda": ch_substda,
             "event": self.event,
             "ambiente_gerador": amb_ger or "Não Informado",
             "key_nfse": key,
@@ -706,7 +719,7 @@ class DanfseParser:
         # Concatenação estruturada por pipe (spec bloco 8).
         segments = [
             ("Inf. Cont.", self._t(info_compl, "xInfComp")),
-            ("NFS-e Subst.", self._t(dps, "chSubstda")),
+            ("NFS-e Subst.", data.get("ch_substda", "")),
             ("Doc. Ref.", self._t(dps, "docRef")),
             ("Cod. Obra", self._t(self._find(dps, "obra"), "cObra")),
             ("Insc. Imob.", self._t(self._find(dps, "imovel"), "inscImobFisc")),

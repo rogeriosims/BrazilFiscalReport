@@ -44,9 +44,11 @@ danfse = Danfse(xml=xml_content, config=config)
 danfse.output('output_danfse.pdf')
 ```
 
-### Cancelamento / Substituição (Eventos)
+### Cancelamento / Substituição (Eventos e Notas Substitutas)
 
-No modelo nacional da NFS-e, um **XML de NFS-e autorizado é imutável**: ele mantém sua situação original (`cStat` 100/107) para sempre. Cancelamento e substituição são registrados em um **documento de evento separado** (`<evento>`, por exemplo `e101101 - Cancelamento de NFS-e`) que referencia a nota pela chave de acesso (`chNFSe`).
+No modelo nacional da NFS-e, um **XML de NFS-e autorizado é imutável**: ele mantém seu código de situação original (`cStat`, ex.: 100 para Autorizada, 107 para NFS-e MEI, ou 102 para Decisão Judicial ou Administrativa) para sempre. O cancelamento e a substituição da nota anterior são registrados em **documentos de eventos separados** (como o evento de cancelamento ou de substituição).
+
+Além disso, a nota nova que substitui a anterior é identificada pelo grupo `<subst>` (tag `<chSubstda>`) no XML da DPS, e é exibida no DANFSe com a situação **"NFS-e Substituta"**.
 
 Há duas formas de gerar um DANFSE cancelado/substituído:
 
